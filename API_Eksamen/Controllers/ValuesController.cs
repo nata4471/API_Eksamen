@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API_Eksamen.Data;
+using API_Eksamen.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API_Eksamen.Controllers
@@ -10,36 +12,84 @@ namespace API_Eksamen.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly IUnitOfWork _unit;
+        public ValuesController(IUnitOfWork unit)
+        {
+            _unit = unit;
+        }
         // GET api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [Route("GetAllValues")]
+        public async Task<IActionResult> GetAsync()
         {
-            return new string[] { "value1", "value2" };
+          var values=  await _unit.TestObjects.GetAllAsync();
+            return Ok(values);
         }
 
         // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        [HttpGet]
+        [Route("GetById/{id}")]
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var value = await _unit.TestObjects.GetAsync(id);
+            if (value == null)
+            {
+                return NotFound();
+            }
+            return Ok(value);
         }
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Route("Create")]
+        public async Task<IActionResult> Post([FromBody] TestObject testObject)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            testObject.Posted = DateTime.Now;
+            await _unit.TestObjects.AddAsync(testObject);
+             _unit.Complete();
+            var value = await _unit.TestObjects.FindAsync(x => x.Text == testObject.Text && x.Posted == testObject.Posted);
+            // return CreatedAtAction("GetById",new { id = value.Id },value);
+            return Ok(value);
+
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        [Route("Update/{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] TestObject testObject)
         {
+            if (id != testObject.Id)
+            {
+                return BadRequest();
+            }
+           await _unit.TestObjects.UpdateAsync(testObject);
+             _unit.Complete();
+
+
+            return NoContent();
         }
 
         // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+        [Route("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
+            var value = await _unit.TestObjects.GetAsync(id);
+            if (value == null)
+            {
+                return NotFound();
+            }
+          await _unit.TestObjects.RemoveAsync(value);
+
+            _unit.Complete();
+
+            return NoContent();
         }
     }
+
+
 }
