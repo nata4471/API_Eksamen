@@ -12,16 +12,18 @@ namespace API_Eksamen.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IUnitOfWork _unit;
-        public ValuesController(IUnitOfWork unit)
+        private readonly UnitOfWork _unit;
+        public ValuesController(UnitOfWork unit)
         {
             _unit = unit;
         }
         // GET api/values
         [HttpGet]
         [Route("GetAllValues")]
-        public async Task<IActionResult> GetAsync()
+        public async Task<IActionResult> Get()
         {
+           
+
           var values=  await _unit.TestObjects.GetAllAsync();
             return Ok(values);
         }

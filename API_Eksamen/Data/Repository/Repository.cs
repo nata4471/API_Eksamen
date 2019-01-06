@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace API_Eksamen.Data.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
 
     {
         protected readonly DataContext _context;
@@ -18,43 +18,43 @@ namespace API_Eksamen.Data.Repository
             _context = context;
         }
 
-        public  async Task<T> GetAsync(int id)
+        public  async Task<TEntity> GetAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<TEntity>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await _context.Set<T>().Where(predicate).ToListAsync();
+            return await _context.Set<TEntity>().Where(predicate).ToListAsync();
         }
 
-        public async Task AddAsync(T entity)
+        public async Task AddAsync(TEntity entity)
         {
-            await _context.Set<T>().AddAsync(entity);
+            await _context.Set<TEntity>().AddAsync(entity);
         }
 
-        public async Task AddRangeAsync(IEnumerable<T> entities)
+        public async Task AddRangeAsync(IEnumerable<TEntity> entities)
         {
-           await _context.Set<T>().AddRangeAsync(entities);
+           await _context.Set<TEntity>().AddRangeAsync(entities);
         }
 
-        public async Task RemoveAsync(T entity)
+        public async Task RemoveAsync(TEntity entity)
         {
-           _context.Set<T>().Remove(entity);
+           _context.Set<TEntity>().Remove(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task RemoveRangeAsync(IEnumerable<T> entities)
+        public async Task RemoveRangeAsync(IEnumerable<TEntity> entities)
         {
-            _context.Set<T>().RemoveRange(entities);
+            _context.Set<TEntity>().RemoveRange(entities);
             await _context.SaveChangesAsync();
         }
-        public async Task UpdateAsync(T updated)
+        public async Task UpdateAsync(TEntity updated)
         {
             _context.Entry(updated).State = EntityState.Modified;
             await _context.SaveChangesAsync();

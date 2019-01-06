@@ -34,6 +34,7 @@ namespace API_Eksamen
                 var connectionString = Configuration.GetConnectionString("DataContext");
                 options.UseSqlServer(connectionString);
             });
+            services.AddTransient<UnitOfWork>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSwaggerGen(c =>
             {
@@ -52,6 +53,7 @@ namespace API_Eksamen
             {
                 app.UseHsts();
             }
+
 
             app.UseHttpsRedirection();
             app.UseMvc();
