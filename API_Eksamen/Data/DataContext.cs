@@ -18,5 +18,20 @@ namespace API_Eksamen.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TestObject>().HasData(
+         new TestObject
+         {
+             Id = 1,
+             Text = "William",
+             Posted = DateTime.Now
+         }
+         );
+        }
+
+        
+ 
+
     }
 }

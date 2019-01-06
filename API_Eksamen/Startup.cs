@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API_Eksamen.Data;
 using API_Eksamen.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace API_Eksamen
 {
@@ -33,6 +35,10 @@ namespace API_Eksamen
                 options.UseSqlServer(connectionString);
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Min API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +55,15 @@ namespace API_Eksamen
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseSwagger();
+
+            //This line enables Swagger UI, which provides us with a nice, simple UI with which we can view our API calls.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger XML Api Demo v1");
+                c.RoutePrefix = string.Empty;
+            });
         }
     }
+    
 }
